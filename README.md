@@ -123,6 +123,31 @@ food-ordering-app/
 
 ---
 
+# 📱 App Preview
+
+### User App
+![Home Screen](assets\screenshots\Home(user).jpg)
+![Cart Screen](assets\screenshots\Cart(user).jpg)
+![Orders Screen](assets\screenshots\Orders(User).jpg)
+![Home2 Screen](assets\screenshots\Home2(user).jpg)
+![ProductDetails Screen](assets\screenshots\ProductDetails(user).jpg)
+![Profile](assets\screenshots\Profile(user).jpg)
+![DashBoard Details](assets\screenshots\DashBoard(Admin).jpg)
+![Restaurant Details](assets\screenshots\Orders(Admin).jpg)
+
+# 📲 Try It Yourself
+
+Scan the QR code below using the **Expo Go App**:
+
+![QR Code](assets\screenshots\qr\qr.png)
+
+
+
+### Admin App
+![Dashboard](assets/screenshots/admin-dashboard.png)
+![Orders Management](assets/screenshots/orders.png)
+
+
 # 🔐 Authentication
 
 Authentication is handled using Supabase Auth.
