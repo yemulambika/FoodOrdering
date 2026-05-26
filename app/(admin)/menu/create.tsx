@@ -4,6 +4,7 @@ import {
     useProduct,
     useUpdateProduct,
 } from '@/api/products';
+import { useRestaurantList } from '@/api/restaurants';
 import { defaultPizzaImage } from '@/components/ProductListItem';
 import Colors from '@/constants/Colors';
 import Button from '@components/Button';
@@ -24,6 +25,7 @@ const CreateProductScreen = () => {
   );
   const isUpdating = !!idString;
 
+  const { data: restaurants } = useRestaurantList();
   const { mutate: insertProduct } = useInsertProduct();
   const { mutate: updateProduct } = useUpdateProduct();
   const { data: updatingProduct } = useProduct(id);
@@ -79,7 +81,12 @@ const CreateProductScreen = () => {
 
     // Save in the database
     insertProduct(
-      { name, price: parseFloat(price), image: imagePath },
+      {
+        name,
+        price: parseFloat(price),
+        image: imagePath,
+        restaurant_id: restaurants?.[0]?.id ?? 1,
+      },
       {
         onSuccess: () => {
           resetFields();
@@ -115,7 +122,7 @@ const CreateProductScreen = () => {
     deleteProduct(id, {
       onSuccess: () => {
         resetFields();
-        router.replace('/(admin)');
+       // router.replace('/(admin)');
       },
     });
   };

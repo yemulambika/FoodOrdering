@@ -83,51 +83,97 @@ export interface Database {
       products: {
         Row: {
           created_at: string
+          description: string | null
           id: number
           image: string | null
           name: string
           price: number
+          restaurant_id: number | null
         }
         Insert: {
           created_at?: string
+          description?: string | null
           id?: number
           image?: string | null
           name: string
           price: number
+          restaurant_id?: number | null
         }
         Update: {
           created_at?: string
+          description?: string | null
           id?: number
           image?: string | null
           name?: string
           price?: number
+          restaurant_id?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "products_restaurant_id_fkey"
+            columns: ["restaurant_id"]
+            referencedRelation: "restaurants"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
+      restaurants: {
+        Row: {
+          created_at: string
+          delivery_fee: number
+          id: number
+          image: string | null
+          name: string
+          rating: number
+        }
+        Insert: {
+          created_at?: string
+          delivery_fee?: number
+          id?: number
+          image?: string | null
+          name: string
+          rating?: number
+        }
+        Update: {
+          created_at?: string
+          delivery_fee?: number
+          id?: number
+          image?: string | null
+          name?: string
+          rating?: number
         }
         Relationships: []
       }
       profiles: {
         Row: {
           avatar_url: string | null
+          expo_push_token: string | null
           full_name: string | null
           group: string
           id: string
+          stripe_customer_id: string | null
           updated_at: string | null
           username: string | null
           website: string | null
         }
         Insert: {
           avatar_url?: string | null
+          expo_push_token?: string | null
           full_name?: string | null
           group?: string
           id: string
+          stripe_customer_id?: string | null
           updated_at?: string | null
           username?: string | null
           website?: string | null
         }
         Update: {
           avatar_url?: string | null
+          expo_push_token?: string | null
           full_name?: string | null
           group?: string
           id?: string
+          stripe_customer_id?: string | null
           updated_at?: string | null
           username?: string | null
           website?: string | null

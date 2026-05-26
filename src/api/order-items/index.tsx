@@ -1,8 +1,10 @@
 import { supabase } from '@/lib/supabase';
 import { InsertTables } from '@/types';
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 export const useInsertOrderItems = () => {
+  const queryClient = useQueryClient();
+
   return useMutation({
     async mutationFn(items: InsertTables<'order_items'>[]) {
       const { error, data: newProduct } = await supabase
@@ -14,6 +16,9 @@ export const useInsertOrderItems = () => {
         throw new Error(error.message);
       }
       return newProduct;
+    },
+    async onSuccess() {
+      await queryClient.invalidateQueries({ queryKey: ['orders'] });
     },
   });
 };

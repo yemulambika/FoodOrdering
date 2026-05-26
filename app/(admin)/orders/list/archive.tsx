@@ -1,7 +1,6 @@
-import { Text, FlatList, ActivityIndicator } from 'react-native';
-import orders from '@assets/data/orders';
-import OrderListItem from '@/components/OrderListItem';
 import { useAdminOrderList } from '@/api/orders';
+import OrderListItem from '@/components/OrderListItem';
+import { ActivityIndicator, FlatList, Text } from 'react-native';
 
 export default function OrdersScreen() {
   const {
@@ -15,6 +14,10 @@ export default function OrdersScreen() {
   }
   if (error) {
     return <Text>Failed to fetch</Text>;
+  }
+
+  if (!orders?.length) {
+    return <Text>No archived orders available.</Text>;
   }
 
   return (

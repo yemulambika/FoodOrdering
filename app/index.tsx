@@ -1,37 +1,41 @@
-import Button from '@/components/Button';
-import { supabase } from '@/lib/supabase';
+import { ActivityIndicator, View, StyleSheet } from 'react-native';
+import { Redirect } from 'expo-router';
+import theme from '@/constants/theme';
 import { useAuth } from '@/providers/AuthProvider';
-import { Link, Redirect } from 'expo-router';
-import React from 'react';
-import { ActivityIndicator, View } from 'react-native';
 
-const index = () => {
-  const { session, loading, isAdmin } = useAuth();
+/**
+ * Root role router:
+ * - no session → sign-in
+ * - profile.group admin → admin dashboard
+ * - else → user home tabs
+ */
+export default function Index() {
+  const { session, isAdmin, loading } = useAuth();
 
   if (loading) {
-    return <ActivityIndicator />;
+    return (
+      <View style={styles.center}>
+        <ActivityIndicator size="large" color={theme.colors.primary} />
+      </View>
+    );
   }
 
   if (!session) {
-    return <Redirect href={'/sign-in'} />;
+    return <Redirect href="/(auth)/sign-in" />;
   }
 
-  if (!isAdmin) {
-    return <Redirect href={'/(user)'} />;
+  if (isAdmin) {
+    return <Redirect href="/(admin)/dashboard" />;
   }
 
-  return (
-    <View style={{ flex: 1, justifyContent: 'center', padding: 10 }}>
-      <Link href={'/(user)'} asChild>
-        <Button text="User" />
-      </Link>
-      <Link href={'/(admin)'} asChild>
-        <Button text="Admin" />
-      </Link>
+  return <Redirect href="/(user)/home" />;
+}
 
-      <Button onPress={() => supabase.auth.signOut()} text="Sign out" />
-    </View>
-  );
-};
-
-export default index;
+const styles = StyleSheet.create({
+  center: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: theme.colors.background,
+  },
+});

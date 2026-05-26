@@ -1,55 +1,64 @@
-import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { Redirect, Tabs } from 'expo-router';
-import { useColorScheme } from 'react-native';
-
-import Colors from '@/constants/Colors';
 import { useAuth } from '@/providers/AuthProvider';
+import FontAwesome from '@expo/vector-icons/FontAwesome';
+import theme from '@/constants/theme';
+import { ActivityIndicator, View, StyleSheet } from 'react-native';
 
-/**
- * You can explore the built-in icon families and icons on the web at https://icons.expo.fyi/
- */
 function TabBarIcon(props: {
   name: React.ComponentProps<typeof FontAwesome>['name'];
   color: string;
 }) {
-  return <FontAwesome size={20} style={{ marginBottom: -3 }} {...props} />;
+  return <FontAwesome size={24} style={{ marginBottom: -3 }} {...props} />;
 }
 
-export default function TabLayout() {
-  const colorScheme = useColorScheme();
-  const { session } = useAuth();
+export default function UserTabLayout() {
+  const { session, isAdmin, loading } = useAuth();
+
+  if (loading) {
+    return (
+      <View style={styles.center}>
+        <ActivityIndicator size="large" color={theme.colors.primary} />
+      </View>
+    );
+  }
 
   if (!session) {
-    return <Redirect href={'/'} />;
+    return <Redirect href="/(auth)/sign-in" />;
+  }
+
+  if (isAdmin) {
+    return <Redirect href="/(admin)/dashboard" />;
   }
 
   return (
     <Tabs
       screenOptions={{
-        tabBarActiveTintColor: Colors[colorScheme ?? 'light'].tint,
+        tabBarActiveTintColor: theme.colors.primary,
+        tabBarInactiveTintColor: theme.colors.textMuted,
+        tabBarStyle: styles.tabBar,
+        tabBarLabelStyle: { fontSize: 11, fontWeight: '600' },
+        headerShown: false,
       }}
     >
       <Tabs.Screen name="index" options={{ href: null }} />
-
       <Tabs.Screen
-        name="menu"
+        name="home"
         options={{
-          title: 'Menu',
-          headerShown: false,
-          tabBarIcon: ({ color }) => (
-            <TabBarIcon name="cutlery" color={color} />
-          ),
+          title: 'Home',
+          tabBarIcon: ({ color }) => <TabBarIcon name="home" color={color} />,
         }}
       />
+      <Tabs.Screen name="menu" options={{ href: null }} />
+      <Tabs.Screen name="restaurant" options={{ href: null }} />
       <Tabs.Screen
         name="orders"
         options={{
           title: 'Orders',
-          headerShown: false,
-          tabBarIcon: ({ color }) => <TabBarIcon name="list" color={color} />,
+          tabBarIcon: ({ color }) => (
+            <TabBarIcon name="list-alt" color={color} />
+          ),
         }}
       />
-
       <Tabs.Screen
         name="profile"
         options={{
@@ -60,3 +69,14 @@ export default function TabLayout() {
     </Tabs>
   );
 }
+
+const styles = StyleSheet.create({
+  center: { flex: 1, justifyContent: 'center', alignItems: 'center' },
+  tabBar: {
+    backgroundColor: theme.colors.card,
+    borderTopColor: theme.colors.border,
+    height: 60,
+    paddingBottom: 8,
+    paddingTop: 8,
+  },
+});

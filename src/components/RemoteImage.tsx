@@ -1,5 +1,5 @@
+import React, { ComponentProps, useEffect, useState } from 'react';
 import { Image } from 'react-native';
-import React, { ComponentProps, useEffect, useMemo, useState } from 'react';
 import { supabase } from '../lib/supabase';
 
 type RemoteImageProps = {
@@ -11,29 +11,44 @@ const RemoteImage = ({ path, fallback, ...imageProps }: RemoteImageProps) => {
   const [image, setImage] = useState('');
 
   useEffect(() => {
-    if (!path) return;
-    (async () => {
+    if (!path) {
       setImage('');
+      return;
+    }
+
+    const isDirectUrl = /^(https?:\/\/|data:|blob:)/i.test(path);
+    if (isDirectUrl) {
+      setImage(path);
+      return;
+    }
+
+    let cancelled = false;
+    setImage('');
+
+    (async () => {
       const { data, error } = await supabase.storage
         .from('product-images')
         .download(path);
 
       if (error) {
-        console.log(error);
+        console.warn('Failed to download image from Supabase storage:', error.message || error);
       }
 
-      if (data) {
+      if (data && !cancelled) {
         const fr = new FileReader();
         fr.readAsDataURL(data);
         fr.onload = () => {
-          setImage(fr.result as string);
+          if (!cancelled) {
+            setImage(fr.result as string);
+          }
         };
       }
     })();
-  }, [path]);
 
-  if (!image) {
-  }
+    return () => {
+      cancelled = true;
+    };
+  }, [path]);
 
   return <Image source={{ uri: image || fallback }} {...imageProps} />;
 };

@@ -43,9 +43,7 @@
       },
       "eas": {
         "projectId": "bb239642-782f-4b0f-b99c-ffda6ec2cd65"
-      },
-      "EXPO_PUBLIC_SUPABASE_URL": "",
-      "EXPO_PUBLIC_SUPABASE_ANON_KEY": ""
+      }
     }
   }
 }

@@ -6,13 +6,22 @@ import React, { useState } from 'react';
 import { Alert, StyleSheet, Text, TextInput, View } from 'react-native';
 
 const SignUpScreen = () => {
+  const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
 
   async function signUpWithEmail() {
     setLoading(true);
-    const { error } = await supabase.auth.signUp({ email, password });
+    const { error } = await supabase.auth.signUp({
+      email,
+      password,
+      options: {
+        data: {
+          full_name: name,
+        },
+      },
+    });
 
     if (error) Alert.alert(error.message);
     setLoading(false);
@@ -27,6 +36,14 @@ const SignUpScreen = () => {
         value={email}
         onChangeText={setEmail}
         placeholder="jon@gmail.com"
+        style={styles.input}
+      />
+
+      <Text style={styles.label}>Name</Text>
+      <TextInput
+        value={name}
+        onChangeText={setName}
+        placeholder="John Doe"
         style={styles.input}
       />
 

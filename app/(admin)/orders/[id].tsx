@@ -4,19 +4,21 @@ import OrderListItem from '@/components/OrderListItem';
 import Colors from '@/constants/Colors';
 import { notifyUserAboutOrderUpdate } from '@/lib/notifications';
 import { OrderStatusList } from '@/types';
-import orders from '@assets/data/orders';
 import { Stack, useLocalSearchParams } from 'expo-router';
 import {
-  FlatList,
-  Text,
-  View,
-  Pressable,
-  ActivityIndicator,
+    ActivityIndicator,
+    FlatList,
+    Pressable,
+    Text,
+    View,
 } from 'react-native';
 
 export default function OrderDetailsScreen() {
   const { id: idString } = useLocalSearchParams();
-  const id = parseFloat(typeof idString === 'string' ? idString : idString[0]);
+  const rawId = Array.isArray(idString) ? idString[0] : idString;
+  const id = Number(rawId);
+
+  const isValidId = Number.isFinite(id) && id > 0;
 
   const { data: order, isLoading, error } = useOrderDetails(id);
   const { mutate: updateOrder } = useUpdateOrder();
@@ -33,6 +35,9 @@ export default function OrderDetailsScreen() {
 
   if (isLoading) {
     return <ActivityIndicator />;
+  }
+  if (!isValidId) {
+    return <Text>Invalid order id</Text>;
   }
   if (error || !order) {
     return <Text>Failed to fetch</Text>;
