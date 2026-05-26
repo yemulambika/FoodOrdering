@@ -329,28 +329,6 @@ This project demonstrates:
 
 ---
 
-# 📸 Screenshots
-
-Add screenshots here after completing the project.
-
----
-
-# 🚀 Deployment
-
-## Android APK Build
-
-```bash
-eas build --platform android
-```
-
-## iOS Build
-
-```bash
-eas build --platform ios
-```
-
----
-
 # 🤝 Contributing
 
 Contributions are welcome. Feel free to fork the repository and submit pull requests.
