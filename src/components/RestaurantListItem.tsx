@@ -1,13 +1,12 @@
 import theme from '@/constants/theme';
 import { Tables } from '@/types';
-import { Link } from 'expo-router';
+import { router } from 'expo-router';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import RemoteImage from './RemoteImage';
 import { defaultPizzaImage } from './ProductListItem';
 
 type RestaurantListItemProps = {
   restaurant: Tables<'restaurants'>;
-  /** Admin list: show card without navigating to user menu */
   adminPreview?: boolean;
 };
 
@@ -20,11 +19,15 @@ function RestaurantCard({ restaurant }: RestaurantListItemProps) {
         style={styles.image}
         resizeMode="cover"
       />
+
       <View style={styles.info}>
-        <Text style={styles.name}>{restaurant.name}</Text>
+        <Text style={styles.name} numberOfLines={2}>
+          {restaurant.name}
+        </Text>
+
         <Text style={styles.meta}>
-          ★ {restaurant.rating.toFixed(1)} · ${restaurant.delivery_fee.toFixed(2)}{' '}
-          delivery
+          ★ {restaurant.rating.toFixed(1)} · $
+          {restaurant.delivery_fee.toFixed(2)} delivery
         </Text>
       </View>
     </>
@@ -44,11 +47,14 @@ const RestaurantListItem = ({
   }
 
   return (
-    <Link href={`/(user)/restaurant/${restaurant.id}`} asChild>
-      <Pressable style={styles.container}>
-        <RestaurantCard restaurant={restaurant} />
-      </Pressable>
-    </Link>
+    <Pressable
+      onPress={() =>
+        router.push(`/(user)/restaurant/${restaurant.id}`)
+      }
+      style={styles.container}
+    >
+      <RestaurantCard restaurant={restaurant} />
+    </Pressable>
   );
 };
 
@@ -60,11 +66,22 @@ const styles = StyleSheet.create({
     borderRadius: theme.radius.lg,
     overflow: 'hidden',
     marginBottom: 12,
-    ...theme.shadow.card,
+
+    // safer than spreading unknown shadow objects
+    ...(theme.shadow?.card ?? {}),
   },
-  image: { width: '100%', height: 140 },
-  info: { padding: theme.spacing.md },
-  name: { fontSize: 18, fontWeight: '700', color: theme.colors.text },
+  image: {
+    width: '100%',
+    height: 140,
+  },
+  info: {
+    padding: theme.spacing.md,
+  },
+  name: {
+    fontSize: 18,
+    fontWeight: '700',
+    color: theme.colors.text,
+  },
   meta: {
     marginTop: 4,
     color: theme.colors.primary,

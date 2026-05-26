@@ -3,10 +3,13 @@ import { useRestaurantList } from '@/api/restaurants';
 import ProductListItem from '@/components/ProductListItem';
 import RestaurantListItem from '@/components/RestaurantListItem';
 import LoadingState from '@/components/ui/LoadingState';
+import ResponsiveContainer from '@/components/ui/ResponsiveContainer';
 import theme from '@/constants/theme';
+import { useResponsiveGrid } from '@/hooks/useResponsiveGrid';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
 
 export default function HomeScreen() {
+  const grid = useResponsiveGrid();
   const { data: restaurants, isLoading: rLoading, error: rError } =
     useRestaurantList();
   const { data: products, isLoading: pLoading, error: pError } = useProductList();
@@ -23,44 +26,48 @@ export default function HomeScreen() {
     );
   }
 
-  const featured = (products ?? []).slice(0, 6);
+  const featured = (products ?? []).slice(0, grid.numColumns * 2);
 
   return (
     <ScrollView
       style={styles.scroll}
-      contentContainerStyle={styles.content}
+      contentContainerStyle={styles.scrollContent}
       showsVerticalScrollIndicator={false}
     >
-      <Text style={styles.heroTitle}>What's on your mind?</Text>
-      <Text style={styles.heroSub}>Order from top restaurants</Text>
+      <ResponsiveContainer>
+        <Text style={styles.heroTitle}>What's on your mind?</Text>
+        <Text style={styles.heroSub}>Order from top restaurants</Text>
 
-      <Text style={styles.section}>Restaurants</Text>
-      {(restaurants ?? []).map((restaurant) => (
-        <RestaurantListItem key={restaurant.id} restaurant={restaurant} />
-      ))}
-
-      <Text style={styles.section}>Featured</Text>
-      <View style={styles.grid}>
-        {featured.map((item) => (
-          <View key={item.id} style={styles.gridItem}>
-            <ProductListItem
-              product={item}
-              detailHref={
-                item.restaurant_id
-                  ? `/(user)/restaurant/${item.restaurant_id}/${item.id}`
-                  : undefined
-              }
-            />
-          </View>
+        <Text style={styles.section}>Restaurants</Text>
+        {(restaurants ?? []).map((restaurant) => (
+          <RestaurantListItem key={restaurant.id} restaurant={restaurant} />
         ))}
-      </View>
+
+        <Text style={styles.section}>Featured</Text>
+        <View style={[styles.grid, { gap: grid.gap }]}>
+          {featured.map((item) => (
+            <View key={item.id} style={{ width: grid.cardWidth }}>
+              <ProductListItem
+                product={item}
+                width={grid.cardWidth}
+                titleFontSize={grid.titleFontSize}
+                detailHref={
+                  item.restaurant_id
+                    ? `/(user)/restaurant/${item.restaurant_id}/${item.id}`
+                    : undefined
+                }
+              />
+            </View>
+          ))}
+        </View>
+      </ResponsiveContainer>
     </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
   scroll: { flex: 1, backgroundColor: theme.colors.background },
-  content: { padding: theme.spacing.md, paddingBottom: 32 },
+  scrollContent: { paddingBottom: 32 },
   center: { flex: 1, alignItems: 'center', justifyContent: 'center' },
   error: { color: theme.colors.error },
   heroTitle: {
@@ -82,7 +89,5 @@ const styles = StyleSheet.create({
   grid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    gap: 10,
   },
-  gridItem: { width: '48%' },
 });
